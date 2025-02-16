@@ -1,0 +1,5 @@
+anthropic
+python-dotenv
+schedule
+streamlit
+secure-smtplib

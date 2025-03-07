@@ -7,9 +7,11 @@ import json
 # Load environment variables
 load_dotenv()
 
+database_location = os.getenv('DATA_LOCATION', '.') + '/app_data.db'
+
 # Initialize database
 def init_db():
-    conn = sqlite3.connect('app_data.db')
+    conn = sqlite3.connect(database_location)
     c = conn.cursor()
     c.execute('''
     CREATE TABLE IF NOT EXISTS users (
@@ -42,7 +44,7 @@ def init_db():
     conn.close()
 
 def verify_credentials(username, password):
-    conn = sqlite3.connect('app_data.db')
+    conn = sqlite3.connect(database_location)
     c = conn.cursor()
     
     password_hash = hashlib.sha256(password.encode()).hexdigest()
@@ -55,7 +57,7 @@ def verify_credentials(username, password):
     return user is not None
 
 def save_batch_to_db(batch_id, messages_json):
-    conn = sqlite3.connect('app_data.db')
+    conn = sqlite3.connect(database_location)
     c = conn.cursor()
     
     # First, ensure we have a batches table
@@ -76,7 +78,7 @@ def save_batch_to_db(batch_id, messages_json):
     conn.close()
 
 def update_batch_status(batch_id, status):
-    conn = sqlite3.connect('app_data.db')
+    conn = sqlite3.connect(database_location)
     c = conn.cursor()
     
     c.execute("UPDATE batches SET status = ? WHERE batch_id = ?", 
@@ -86,7 +88,7 @@ def update_batch_status(batch_id, status):
     conn.close()
     
 def get_batch_history():
-    conn = sqlite3.connect('app_data.db')
+    conn = sqlite3.connect(database_location)
     conn.row_factory = sqlite3.Row  # To get column names
     c = conn.cursor()
     
@@ -97,7 +99,7 @@ def get_batch_history():
     return batches
 
 def get_batch_messages(batch_id):
-    conn = sqlite3.connect('app_data.db')
+    conn = sqlite3.connect(database_location)
     c = conn.cursor()
     
     c.execute("SELECT messages FROM batches WHERE batch_id = ?", (batch_id,))
